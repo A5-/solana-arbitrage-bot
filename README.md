@@ -1,6 +1,6 @@
 # Solana  Arbitrage Bot
 
-A simple Solana onchain arbitrage bot for arbitrage opportunities. This bot calculate the most optimal trade size between various DEX pools on Solana and executes trades when profitable opportunities are found. This repository utilizes the onchain program for executing arbitrage trades.
+A simple Solana Arbitrage bot for arbitrage opportunities. This bot calculate the most optimal trade size between various DEX pools on Solana and executes trades when profitable opportunities are found. This repository utilizes the onchain program for executing arbitrage trades.
 
 **This is a demo bot to show how to parse each pool and call the onchain program.**
 **This is NOT a fully functional bot. This is only recommanded for advanced users to use as a reference.**
@@ -11,6 +11,22 @@ https://solscan.io/tx/2JtgbXAgwPib9L5Ruc5vLhQ5qeX5EMhVDQbcCaAYVJKpEFn22ArEqXhipu
 
 Program:
 https://solscan.io/account/MEViEnscUm6tsQRoGd9h6nLQaQspKj7DB2M5FwM3Xvz
+
+---
+
+## Let's Connect!,
+
+<a href="mailto:fenrow325@gmail.com" target="_blank">
+  <img src="https://img.shields.io/badge/Gmail-D14836?style=for-the-badge&logo=gmail&logoColor=white" alt="Gmail">
+</a>
+<a href="https://t.me/github_a5" target="_blank">
+  <img src="https://img.shields.io/badge/Telegram-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white" alt="Telegram">
+</a>
+<a href="https://discord.com/users/fenrow_325" target="_blank">
+  <img src="https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white" alt="Discord">
+</a>
+
+---
 
 ## Features
 
@@ -45,8 +61,8 @@ https://solscan.io/account/MEViEnscUm6tsQRoGd9h6nLQaQspKj7DB2M5FwM3Xvz
 1. Clone the repository
 
    ```
-   git clone https://github.com/x89/Solana-Arbitrage-Bot.git
-   cd Solana-Arbitrage-Bot
+   git clone https://github.com/A5-/solana-arbitrage-bot.git
+   cd Solana-arbitrage-Bot
    ```
 
 2. Update config.toml file
