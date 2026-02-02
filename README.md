@@ -1,141 +1,119 @@
-# Shreddit
+# Solana  Arbitrage Bot
 
-Shreddit is a Python command line program which will take a user's post history on the website
-[Reddit](http://reddit.com), and will systematically go through the user's history deleting one post/submission at a
-time until only those whitelisted remain. It allows you to maintain your normal reddit account while having your history
-scrubbed after a certain amount of time.
+A simple Solana onchain arbitrage bot for arbitrage opportunities. This bot calculate the most optimal trade size between various DEX pools on Solana and executes trades when profitable opportunities are found. This repository utilizes the onchain program for executing arbitrage trades.
 
-When it became known that post edits were *not* saved but post deletions *were* saved, code was added to edit your post
-prior to deletion. In fact you can actually turn off deletion all together and just have lorem ipsum (or a message
-about Shreddit) but this will increase how long it takes the script to run as it will be going over all of your messages
-every run.
+**This is a demo bot to show how to parse each pool and call the onchain program.**
+**This is NOT a fully functional bot. This is only recommanded for advanced users to use as a reference.**
+**For new users please use the full featured bot to get started:**
 
-## Important New Changes (as of Dec 2016)
+Example transaction:
+https://solscan.io/tx/2JtgbXAgwPib9L5Ruc5vLhQ5qeX5EMhVDQbcCaAYVJKpEFn22ArEqXhipu5fFyhrEwosiHWzRUhWispJUCYyAnKT
 
-Due to deprecation of the PRAW 3.x library, Shreddit is using PRAW 4. This requires that OAuth be used to authenticate.
-Thankfully, however, it is much easier than in previous versions. If you are upgrading, [please review the usage section
-to ensure that you have set up credentials correctly.](#configuring-credentials)
+Program:
+https://solscan.io/account/MEViEnscUm6tsQRoGd9h6nLQaQspKj7DB2M5FwM3Xvz
 
-## Pip Installation
+## Features
 
-`pip install -U shreddit` will install the package and its dependencies, and it will add a `shreddit` command line
-utility to your PATH. This is typically either run in a virtualenv or using administrative privileges for global
-installation.
+- Load configuration from a config file
+- Create ATA if not exist
+- Send transactions through multiple RPC endpoints (spam)
+- Kamino flashloan integration
+- Parse all available pool types (Raydium, DLMM, Whirlpool, etc.)
 
-## Manual Installation
+## Supported Dexes
 
-1. Clone the `shreddit` repository to a directory.
-2. From the directory, run `pip install -r requirements.txt`
-3. Run `python setup.py install` to install the package and the `shreddit` command line utility.  This is typically
-   either run in a virtualenv or using administrative privileges for global installation.
+- Pump AMM
+- Raydium V4
+- Raydium CPMM
+- Raydium CLMM
+- Meteora DLMM
+- Meteora Dynamic AMM
+- Meteora DAMM V2
+- Orca Whirlpool
+- SolFi
+- Vertigo
 
-## Usage
+## Getting Started
 
-After installing the `shreddit` command line utility, the first step is setting up the tool's configuration files.
-Simply typing `shreddit -g` will generate configs. After configuring credentials, running the tool with the `shreddit`
-command will begin the tool's operation.
+### Prerequisites
 
-### Configuring Credentials
+- Rust and Cargo installed
+- A Solana wallet with SOL
 
-Running `shreddit -g` will generate a blank praw.ini file that looks like this:
+### Installation
 
-```
-# Credentials go here. Fill out default, or provide one or more names and call shreddit with the -u option to specify
-# which set to use.
-[default]
-client_id=
-client_secret=
-username=
-password=
-```
+1. Clone the repository
 
-**You must provide values for each of these.** As strange as it may seem to provide both a username/password pair *and*
-a client id/secret pair, that is how the Reddit API does "OAuth" script applications.
+   ```
+   git clone https://github.com/x89/Solana-Arbitrage-Bot.git
+   cd Solana-Arbitrage-Bot
+   ```
 
-Username and password are simply your Reddit login credentials for the account that will be used. However, to obtain the
-client ID and secret, follow these steps (taken from 
-[PRAW documentation](http://praw.readthedocs.io/en/latest/getting_started/authentication.html#script-application)):
+2. Update config.toml file
 
-1. Open your Reddit application preferences by clicking [here](https://www.reddit.com/prefs/apps/).
-2. Add a new application. It doesn't matter what it's named, but calling it "shreddit" makes it easier to remember.
-3. Select "script".
-4. Redirect URL does not matter for script applications, so enter something like http://127.0.0.1:8080
-5. Once created, you should see the name of your application followed by 14 character string. Enter this 14 character
-   string as your `client_id`.
-6. Copy the 27 character "secret" string into the `client_secret` field.
+3. Run the bot
+   ```
+   cargo run --release --bin Solana-Arbitrage-Bot -- --config config.toml
+   ```
 
-Finally, your praw.ini should look like this (with fake data provided here):
+### Configuration
 
-```
-[default]
-client_id=f3FaKeD4t40PsJ
-client_secret=dfK3pfMoReFAkEDaTa123456789
-username=testuser
-password=123passwordgoeshere123
-```
+1. Copy the example configuration file:
+   ```
+   cp config.toml.example config.toml
+   ```
+2. Edit `config.toml` and configure your:
+   - Private key for your Solana wallet
+   - RPC endpoint URL(s)
+3. Configure your trading pairs and pools:
+   - Update the `mint_config_list` with your desired token mints
+   - Add the corresponding pool addresses for each DEX type (Raydium, DLMM, Whirlpool, etc.)
+   - Ensure lookup table accounts are properly set for your trading pairs
 
-Keep your praw.ini either in the current directory when running `shreddit`, or in one of the config folders
-[described here](http://praw.readthedocs.io/en/latest/getting_started/configuration/prawini.html) such as
-`~/.config` in Linux or `%APPDATA%` in Windows.
+## Configuration Options
 
-To use more than one account, you can add multiple profiles instead of just `[default]` and use the `-u` option to 
-`shreddit` to choose which one each time.
+### Bot Configuration
 
-### Automating
+- `compute_unit_limit`: Maximum compute unit limit per transaction
+- `process_delay`: Delay between processing iterations in milliseconds
 
-The easiest way to automate this tool after the first run is by using the cron utility. Run `crontab -e` to edit your
-user's crontab settings.
+### Routing Configuration
 
-**Examples:**
+- `mint_config_list`: List of mints to process
+  - `mint`: Mint address
+  - `raydium_pool_list`: List of Raydium pool addresses
+  - `meteora_damm_pool_list`: List of Meteora Dynamic AMM pool addresses
+  - `meteora_dlmm_pool_list`: List of Meteora DLMM pool addresses
+  - `meteora_damm_v2_pool_list`: List of Meteora DAMM V2 pool addresses
+  - `raydium_cp_pool_list`: List of Raydium CP pool addresses
+  - `pump_pool_list`: List of Pump pool addresses
+  - `whirlpool_pool_list`: List of Whirlpool pool addresses
+  - `raydium_clmm_pool_list`: List of Raydium CLMM pool addresses
+  - `solfi_pool_list`: List of Solfi pool addresses
+  - `vertigo_pool_list`: List of Vertigo pool addresses
+  - `lookup_table_accounts`: List of lookup table accounts
+  - `process_delay`: Process delay in milliseconds
 
-The following examples require that the PRAW configuration file is located in the config directory. See [this PRAW
-documentation](http://praw.readthedocs.io/en/latest/getting_started/configuration/prawini.html) for more information.
+### RPC Configuration
 
-- Run every hour on the hour
-        `0 * * * * shreddit -c <full path to shreddit.yml>`
+- `url`: RPC URL for the Solana network
 
-- Run at 3am every morning
-        `0 3 * * * shreddit -c <full path to shreddit.yml>`
+### Spam Configuration
 
-- Run once a month on the 1st of the month
-        `0 0 1 * * shreddit -c <full path to shreddit.yml>`
+- `enabled`: Enable spam transactions
+- `sending_rpc_urls`: List of RPC URLs for sending transactions
+- `compute_unit_price`: Fixed compute unit price
+- `max_retries`: Maximum retries
+- `enable_simple_send`: Enable simple send mode
 
-If virtualenv was used, be sure to add `source /full/path/to/venv/bin/activate &&` before the command. For example:
+### Wallet Configuration
 
-`0 * * * * source /full/path/to/venv/bin/activate && shreddit -c <full path to shreddit.yml>`
+- `private_key`: Private key (can be path or environment variable)
 
-### Command Line Options
+### Kamino Flashloan Configuration
 
-```
-$ shreddit --help
-usage: app.py [-h] [-c CONFIG] [-g] [-u USER]
+- `enabled`: Enable Kamino flashloan
 
-Command-line frontend to the shreddit library.
+## License
 
-optional arguments:
-  -h, --help            show this help message and exit
-  -c CONFIG, --config CONFIG
-                        Config file to use instead of the default shreddit.yml
-  -g, --generate-configs
-                        Write shreddit and praw config files to current
-                        directory.
-  -u USER, --user USER  User section from praw.ini if not default
-```
-
-## For Windows users
-
-1. Make sure you have Python installed.
-   [Click here for the Python download page](https://www.python.org/downloads/).
-        - **Note:** Install either `python 2.x` or `python 3.x`, not both.
-2. Follow the [pip installation](#pip-installation) instructions.
-3. Open a new command prompt and verify that the `shreddit` command works before moving on to the [usage](#usage)
-   section.
-
-## Caveats
-
-- Certain limitations in the Reddit API and the PRAW library make it difficult to delete more than 1,000 comments.
-  While deleting >1000 comments is planned, it is necessary right now to rerun the program until they are all deleted.
-
-- We are relying on Reddit admin words that they do not store edits, deleted posts are still stored in the database
-  they are merely inaccessible to the public.
-
+MIT
