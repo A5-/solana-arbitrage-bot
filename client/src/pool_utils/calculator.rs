@@ -9,7 +9,6 @@ use arbitrary::Arbitrary;
 /// "sensible" given a maximum of u128.
 /// Note that on Ethereum, Uniswap uses the geometric mean of all provided
 /// input amounts, and Balancer uses 100 * 10 ^ 18.
-pub const INITIAL_SWAP_POOL_AMOUNT: u128 = 1_000_000_000;
 
 /// Hardcode the number of token types in a pool, used to calculate the
 /// equivalent pool tokens for the owner trading fee.
@@ -76,12 +75,6 @@ pub struct TradingTokenResult {
     pub token_b_amount: u128,
 }
 
-/// Trait for packing of trait objects, required because structs that implement
-/// `Pack` cannot be used as trait objects (as `dyn Pack`).
-pub trait DynPack {
-    /// Only required function is to pack given a trait object
-    fn pack_into_slice(&self, dst: &mut [u8]);
-}
 
 /// Trait representing operations required on a swap curve
 pub trait CurveCalculator: Debug + DynPack {

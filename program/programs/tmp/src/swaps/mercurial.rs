@@ -32,12 +32,6 @@ pub fn _mercurial_swap<'info>(
         AccountMeta::new(ctx.accounts.user_dst.key(), false),
     ];
 
-    let instruction = Instruction {
-        program_id: *ctx.accounts.mercurial_swap_program.key,
-        accounts: ix_accounts,
-        data: data.try_to_vec()?,
-    };
-
     let accounts = vec![
         ctx.accounts.pool_account.to_account_info(),
         ctx.accounts.token_program.to_account_info(),
